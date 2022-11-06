@@ -10,7 +10,7 @@ def check_vision() -> str:
     return soup["href"].replace("/ga0321/SoulMeter/releases/tag/","")
 
 def update(vision):
-    open(f"./{vision}.zip", "wb").write(requests.get(f"https://github.com/ga0321/SoulMeter/releases/download/1.3.3.1/SoulMeter-v{vision}.zip").content)
+    open(f"./{vision}.zip", "wb").write(requests.get(f"https://github.com/ga0321/SoulMeter/releases/download/{vision}/SoulMeter-v{vision}.zip").content)
     shutil.unpack_archive(f"./{vision}.zip", ".")
 
 if not ctypes.windll.shell32.IsUserAnAdmin():
