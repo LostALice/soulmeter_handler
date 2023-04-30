@@ -1,5 +1,7 @@
 /build/
 /dist/
-
+/soulmeter/
+/archive/
 
 soulmeter_handler.spec
+config.json

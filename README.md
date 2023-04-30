@@ -2,7 +2,7 @@
 
 # Soulmeter_Handler
 
-![專案封面圖](1.ico)
+![icon](1.ico)
 
 ## Function
 
@@ -18,22 +18,20 @@
 ## Config file
 ```
 {
-    "KeepHistoryVision": false,
-    "KeepArchive": false,
     "StartSoulWorker": true,
+    "KeepArchive": false,
     "RepoOwner": "neonr-0"
 }
 ```
 ## Config description
-- KeepHistoryVision - keep the old vision
-- KeepArchive - keep all .zip file
 - StartSoulWorker - start both DPS and soulworker
+- KeepArchive - keep all .zip file
 - RepoOwner - set the repo owner
 
 ## Built command
 
 ```
-pyinstaller -F -w --icon=1.ico .\soulmeter_handler.py
+pyinstaller -F -w --icon=1.ico --onefile .\soulmeter_handler.py
 ```
 
 ## Contact

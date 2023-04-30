@@ -1,101 +1,93 @@
 #Code by AkinoAlice@Tyrant_Rex
 
-import requests, os, shutil, ctypes, re, json
+import requests, os, shutil, re, json
 
 from webbrowser import open_new
 from bs4 import BeautifulSoup
 
 class PermissionError(Exception):
-    """
-    Please follow the following instructions:
-    1. Right click the program
-    2. Select "Properties" -> "Compatibility".
-    3. Verify if the checkbox for "Run this program as an Administrator" has been selected.
-
-    請按照以下說明操作:
-    1.右鍵單擊程序
-    2.選擇屬性 -> 兼容性
-    3.檢查是否選中“以管理員身份運行此程序”的複選框
-    """
-
+    pass
 
 class handler:
     def __init__(self) -> None:
+        self.StartSoulWorker :bool
+        self.KeepArchive :bool
+        self.RepoOwner :str
+        self.vision :str
+
         try:
-            setting = json.load("setting.json")
+            with open("./config.json","r",encoding="utf-8") as f:
+                setting = json.load(f)
+
         except FileNotFoundError:
             setting = {
-                "KeepHistoryVision": False,
-                "KeepArchive": False,
                 "StartSoulWorker": True,
+                "KeepArchive": False,
                 "RepoOwner": "neonr-0",
             }
-        with open("config.json", "w") as setting_file:
-            setting_file.write(json.dumps(setting,indent=4))
+            with open("./config.json", "w") as setting_file:
+                setting_file.write(json.dumps(setting,indent=4))
 
-        setting = json.load("setting.json")
-        self.KeepHistoryVision = setting["KeepHistoryVision"]
         self.StartSoulWorker = setting["StartSoulWorker"]
         self.KeepArchive = setting["KeepArchive"]
         self.RepoOwner = setting["RepoOwner"]
-
-    #remove old vision
-    def remove_file(self,vision: str) -> None:
-        for history_file in os.listdir():
-            if history_file.endswith(".exe") and not self.KeepHistoryVision:
-                if vision in history_file:
-                    continue
-                elif "soulmeter_handler" in history_file :
-                    continue
-                os.remove(history_file)
-
-            if history_file.endswith(".zip") and not self.KeepArchive:
-                if vision in history_file:
-                    continue
-                os.remove(history_file)
+        self.vision = ""
 
     #check update
-    def check_vision(self,repo_owner: str) -> str:
-        soup = BeautifulSoup(requests.get(f"https://github.com/{repo_owner}/SoulMeter").text, "lxml")
-        soup = soup.find(href=re.compile(f"/{repo_owner}/SoulMeter/releases/tag/*"))
-        return soup["href"].replace(f"/{repo_owner}/SoulMeter/releases/tag/","")
+    def check_vision(self) -> None:
+        soup = BeautifulSoup(requests.get(f"https://github.com/{self.RepoOwner}/SoulMeter").text, "lxml")
+        soup = soup.find(href=re.compile(f"/{self.RepoOwner}/SoulMeter/releases/tag/*"))
+        self.vision = soup["href"].replace(f"/{self.RepoOwner}/SoulMeter/releases/tag/","")
 
     #update soulmeter
-    def update(self,vision: str, repo_owner: str) -> None:
-        open(f"./{vision}.zip", "wb").write(requests.get(f"https://github.com/{repo_owner}/SoulMeter/releases/download/{vision}/SoulMeter-v{vision}.zip").content)
-        shutil.unpack_archive(f"./{vision}.zip", ".")
+    def update(self) -> None:
+        for soulmeter_file in os.listdir("./soulmeter"):
+            if soulmeter_file.endswith(".exe"):
+                if f"./soulmeter/{soulmeter_file}" == f"./soulmeter/SoulMeter {self.vision}.exe":
+                    return
+                os.remove(f"./soulmeter/{soulmeter_file}")
+
+        with open(f"./archive/{self.vision}.zip", "wb") as f:
+            f.write(requests.get(f"https://github.com/{self.RepoOwner}/SoulMeter/releases/download/{self.vision}/SoulMeter-v{self.vision}.zip").content)
+
+        shutil.unpack_archive(f"./archive/{self.vision}.zip", "./soulmeter")
+
+        if not self.KeepArchive:
+            os.remove(f"./archive/{self.vision}.zip")
 
     #startup
-    def startup(self):
-        if not ctypes.windll.shell32.IsUserAnAdmin():
-            raise BaseException("Run as Admin/以管理員身份運行")
-
+    def startup(self) -> None:
         if not os.path.exists("./soulmeter"):
             os.mkdir("./soulmeter")
         if not os.path.exists("./archive"):
             os.mkdir("./archive")
 
+    def start_soulworker(self) -> None:
+        os.chdir("./soulmeter")
+        os.popen(f"./SoulMeter {self.vision}.exe")
 
-# def main():
-#     setting = setup()
-#     repo_owner = setting["RepoOwner"]
+        if self.StartSoulWorker:
+            open_new("steam://rungameid/1377580")
 
-#     if not ctypes.windll.shell32.IsUserAnAdmin():
-#         raise BaseException("Run as Admin/以管理員身份運行")
-#     vision = check_vision(repo_owner)
-
-#     if not f"SoulMeter {vision}.exe" in os.listdir():
-#         update(vision,repo_owner)
-
-#     remove_file(vision)
-
-#     os.popen(f"./SoulMeter {vision}.exe")
-
-#     if setting["StartSoulWorker"]:
-#         open_new("steam://rungameid/1377580")
+    def main(self) -> None:
+        self.startup()
+        self.check_vision()
+        self.update()
+        self.start_soulworker()
 
 if __name__ == "__main__":
     try:
-        handler().startup()
+        sw = handler()
+        sw.main()
     except:
-        raise BaseException("Run as Admin/以管理員身份運行")
+        raise PermissionError("""
+                Please follow the following instructions:
+                1. Right click the program
+                2. Select "Properties" -> "Compatibility".
+                3. Verify if the checkbox for "Run this program as an Administrator" has been selected.
+
+                請按照以下說明操作:
+                1.右鍵單擊程序
+                2.選擇屬性 -> 兼容性
+                3.檢查是否選中“以管理員身份運行此程序”的複選框
+        """)
