@@ -35,4 +35,5 @@ pyinstaller -F -w --icon=1.ico --onefile .\soulmeter_handler.py
 ```
 
 ## Contact
-- [x] Discord [Don't you feel your weakness#7031]
+- [x] Discord [Warabimochi wa ikaga desu ka?
+#7031]
