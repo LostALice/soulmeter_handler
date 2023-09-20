@@ -13,7 +13,7 @@
 
 1. Put this application in your DPS directory
 
-1. Create a shortcut and set as "Run as administer"
+1. Create a shortcut and set as "Run as administrator"
 
 ## Config file
 ```
