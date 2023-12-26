@@ -20,6 +20,7 @@
 {
     "StartSoulWorker": true,
     "KeepArchive": false,
+    "KeepFont": false,
     "RepoOwner": "neonr-0"
 }
 ```
