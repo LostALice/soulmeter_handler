@@ -27,6 +27,7 @@
 - StartSoulWorker - start both DPS and soulworker
 - KeepArchive - keep all .zip file
 - RepoOwner - set the repo owner
+- KeepFont - keep font file
 
 ## Built command
 
@@ -35,4 +36,4 @@ pyinstaller -F -w --icon=1.ico --onefile .\soulmeter_handler.py
 ```
 
 ## Contact
-- [x] Discord [Don't you feel your weakness#7031]
+- [x] Discord [warabimochiwaikagadesuka]

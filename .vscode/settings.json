@@ -1,0 +1,10 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "sw",
+            "database": "D:\\Steam\\steamapps\\common\\Soulworker_TWN\\Soulmeter\\soulmeter\\SWDB.db"
+        }
+    ]
+}
